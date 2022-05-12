@@ -99,6 +99,7 @@ BOOL CChatBoxServerDlg::StartServer(CString ip, UINT port) {
 		MessageBox(L"Socket Create Failed");
 		return FALSE;
 	}
+	m_Socket.Bind(port, ip);
 	if (m_Socket.Listen() == FALSE) {
 		MessageBox(L"Socket Listen Failed");
 		return FALSE;
