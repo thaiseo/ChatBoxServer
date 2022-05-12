@@ -7,6 +7,7 @@
 #include "ChatBoxServer.h"
 #include "ChatBoxServerDlg.h"
 #include "afxdialogex.h"
+#include "ServerSocket.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,18 +20,21 @@
 
 CChatBoxServerDlg::CChatBoxServerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CHATBOXSERVER_DIALOG, pParent)
-{
+	{
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void CChatBoxServerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, m_TextBoxIp);
+	DDX_Control(pDX, IDC_EDIT2, m_TextBoxPort);
 }
 
 BEGIN_MESSAGE_MAP(CChatBoxServerDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CChatBoxServerDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -46,7 +50,10 @@ BOOL CChatBoxServerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-
+	if (AfxSocketInit() == FALSE) {
+		MessageBox(L"Failed to Initialize Sockets");
+		return FALSE;
+	}
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -86,3 +93,28 @@ HCURSOR CChatBoxServerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+BOOL CChatBoxServerDlg::StartServer(CString ip, UINT port) {
+	if (m_Socket.Create(port, SOCK_STREAM, ip) == FALSE) {
+		MessageBox(L"Socket Create Failed");
+		return FALSE;
+	}
+	if (m_Socket.Listen() == FALSE) {
+		MessageBox(L"Socket Listen Failed");
+		return FALSE;
+	}
+	return TRUE;
+}
+void CChatBoxServerDlg::OnBnClickedButton1()
+{
+	// TODO: Add your control notification handler code here
+	CString ip, strPort;
+	UINT port;
+	
+	m_TextBoxIp.GetWindowTextW(ip);
+	m_TextBoxPort.GetWindowTextW(strPort);
+	port = _wtoi(strPort);
+
+	StartServer(ip, port);
+
+}

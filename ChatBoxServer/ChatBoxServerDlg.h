@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "ServerSocket.h"
 
 // CChatBoxServerDlg dialog
 class CChatBoxServerDlg : public CDialogEx
@@ -30,4 +30,11 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	CEdit m_TextBoxIp;
+	CEdit m_TextBoxPort;
+	ServerSocket m_Socket;
+	BOOL StartServer(CString ip, UINT port);
+	BOOL TermaiteServer();
+	afx_msg void OnBnClickedButton1();
 };
