@@ -50,10 +50,7 @@ BOOL CChatBoxServerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	if (AfxSocketInit() == FALSE) {
-		MessageBox(L"Failed to Initialize Sockets");
-		return FALSE;
-	}
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -95,11 +92,14 @@ HCURSOR CChatBoxServerDlg::OnQueryDragIcon()
 
 
 BOOL CChatBoxServerDlg::StartServer(CString ip, UINT port) {
+	if (AfxSocketInit() == FALSE) {
+		MessageBox(L"Failed to Initialize Sockets");
+		return FALSE;
+	}
 	if (m_Socket.Create(port, SOCK_STREAM, ip) == FALSE) {
 		MessageBox(L"Socket Create Failed");
 		return FALSE;
 	}
-	m_Socket.Bind(port, ip);
 	if (m_Socket.Listen() == FALSE) {
 		MessageBox(L"Socket Listen Failed");
 		return FALSE;
